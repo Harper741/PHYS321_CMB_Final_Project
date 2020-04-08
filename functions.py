@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import healpy as hp
 from astropy.io import fits
 from astropy.utils.data import get_pkg_data_filename
-import functions_harper as hf
+
 
 #checks that the boolean masks partition the sky
 #takes a list masks = [[mask region 1],...,[mask region n]] where n is the number of regions
@@ -72,12 +72,12 @@ def weight_freqs(weights, freqs):
 #function that takes edges of intervals and sets the masked
 #values to hp.UNSEEN so masking is easy
 def mask_outside_of_interval(interval, the_map):
-    map2 = the_map
-	for i in range(len(the_map)):
-		if((not (interval[0] < the_map[i])) or (not (the_map[i] <= interval[1])) ):
-			map2[i] = hp.UNSEEN
+    map2 = np.copy(the_map)
+    for i in range(len(map2)):
+        if( (interval[0] >= map2[i]) or (map2[i] > interval[1]) ):
+            map2[i] = hp.UNSEEN
 
-	return(map2)
+    return(map2)
 
 #function to compute weights that minimize the variance of the sum of the channels
 
@@ -115,33 +115,46 @@ def splitting_step1(regions, data_map): #FOR JUNK MAP
     size = [] #size of cut-out region
     
     for i in range(len(regions)):
-        
         temp_map = mask_outside_of_interval(regions[i], data_map)
         bool_map.append(hp.pixelfunc.mask_bad(temp_map))
-        print(temp_map)
         cut_map.append(data_map[bool_map[i] == False])
-        size.append(len(cut_map))
+        size.append(len(cut_map[-1]))
     
-    ##if (np.sum(size) != len(data_map)):
-    ##    print('Error: a pixel on a boundary was excluded or included in two or more regions, try changing the absolute tolerance')
-         
-    ##else:
-    return([bool_map,cut_map])
+    if (np.sum(size) != len(data_map)):
+        print('Error: a pixel on a boundary was excluded or included in two or more regions, try changing the absolute tolerance')
+        print('all cut out regions sum up to', np.sum(size))
+        print('the pixel number:', len(data_map))
+    else:
+        return [bool_map,cut_map]
 
-def splitting_step2(bool_maps, data_map): #for other maps, after junk map
+def splitting_step2(bool_map, data_map): #for other maps, after junk map
     #function that takes in the splitting regions and data maps and returns an array of regions cut out from the initial map
        
     cut_map = [] #cut out pieces of original data map
-    size = [] #size of cut-out region
+    len_map = 0
     
-    for i in range(len(bool_maps)):
-        cut_map.append(data_map[bool_map[i] == True])
-        
-    if (len(np.flatten(cut_map)) != len(data_map)):
-        print('Error: a pixel on a boundary was excluded or included in two or more regions, try changing the absolute tolerance')
+    for i in range(len(bool_map)):
+        cut_map.append(data_map[bool_map[i] == False])
+        len_map += len(cut_map[-1])
+    
+    if (len_map != len(data_map)):
+        print('Error: a pixel on a boundary was excluded or included in two or more regions')
+        print(len_map, len(data_map))
        
     else:
         return cut_map #array of cut-out maps 
+    
+def bins_to_regions(bin_edges):
+    #takes in a list of bin edges and returns a list of tuples corresponding to each region
+    regions = []
+    
+    #since the regions take the upper edge not 
+    #the lower edge, we want to make sure the max point is included in a region
+    bin_edges[-1] += 0.01
+    for i in range(len(bin_edges)-1):
+        regions.append([bin_edges[i],bin_edges[i+1]])
+    
+    return(regions)
 
 
 

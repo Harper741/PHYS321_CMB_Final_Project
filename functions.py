@@ -30,14 +30,15 @@ def test_masks(masks):
 #takes a map of temp values for the whole sky
 #takes a mask, list of boolean values, 1 for each sky pixel, if mask[i]=True, then we set map[i]=0
 #returns a map with the masked values set to zero
-def map_and_mask(map,mask):
+def map_and_mask(mask,data_map):
+    
+    a = np.copy(data_map)
+    #check each mask value and set to zero if the value is masked
+    for i in range(len(data_map)):     
+        if(mask[i]):
+            a[i] = hp.UNSEEN
 
-	#check each mask value and set to zero if the value is masked
-	for i in range(len(map)):
-		if(mask[i]):
-			map[i] = 0
-
-	return(map)
+    return(a)
 
 #function that combines all of the seperate maps into one
 #takes maps = [[region 1 temps],[region 2 temps],...,[region n temps]] where n is the number of regions
@@ -119,6 +120,7 @@ def splitting_step1(regions, data_map): #FOR JUNK MAP
         bool_map.append(hp.pixelfunc.mask_bad(temp_map))
         cut_map.append(data_map[bool_map[i] == False])
         size.append(len(cut_map[-1]))
+        print('min:',np.min(cut_map[-1]),'max:',np.max(cut_map[-1]))
     
     if (np.sum(size) != len(data_map)):
         print('Error: a pixel on a boundary was excluded or included in two or more regions, try changing the absolute tolerance')
@@ -150,7 +152,7 @@ def bins_to_regions(bin_edges):
     
     #since the regions take the upper edge not 
     #the lower edge, we want to make sure the max point is included in a region
-    bin_edges[-1] += 0.01
+    bin_edges[0] -= 0.1
     for i in range(len(bin_edges)-1):
         regions.append([bin_edges[i],bin_edges[i+1]])
     

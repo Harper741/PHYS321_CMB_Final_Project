@@ -33,10 +33,20 @@ def test_masks(masks):
 def map_and_mask(mask,data_map):
     
     a = np.copy(data_map)
-    #check each mask value and set to zero if the value is masked
+    #check each mask value and set to hp.UNSEEN if the value is masked
     for i in range(len(data_map)):     
         if(mask[i]):
             a[i] = hp.UNSEEN
+
+    return(a)
+
+def map_and_zero(mask,data_map):
+    
+    a = np.copy(data_map)
+    #check each mask value and set to zero if the value is masked
+    for i in range(len(data_map)):     
+        if(mask[i]):
+            a[i] = 0
 
     return(a)
 
@@ -49,7 +59,7 @@ def recombine_maps(maps, masks):
 		return()
 
 	#making an array of new masks to add together
-	new_maps = [map_and_mask(maps[i],masks[i]) for i in range(len(masks))]
+	new_maps = np.array([map_and_zero(masks[i], maps[i]) for i in range(len(masks))])
 
 	new_map = np.sum(new_maps, axis=0)
 	return(new_map)
@@ -67,7 +77,7 @@ def weight_freqs(weights, freqs):
 
 	#applying weights and returning the result
 	weighted = [weights[i]*freqs[i] for i in range(len(weights))]
-	print(weighted)
+	
 	return(np.sum(weighted,axis=0))
 
 #function that takes edges of intervals and sets the masked
@@ -101,7 +111,7 @@ def compute_weights(freq_temps):
     #computing the weights using the formula derived from minimizing the variance while
     #requiring the weights to sum to 1
     Hinv = np.linalg.inv(H)
-    print(H,"\n" ,Hinv)
+    
     unit_vec = np.ones(n)
     weights = (Hinv @ unit_vec)/(np.transpose(unit_vec) @ Hinv @ unit_vec )
 
@@ -153,10 +163,13 @@ def bins_to_regions(bin_edges):
     #since the regions take the upper edge not 
     #the lower edge, we want to make sure the max point is included in a region
     bin_edges[0] -= 0.1
+    bin_edges[-1] += 0.1
     for i in range(len(bin_edges)-1):
         regions.append([bin_edges[i],bin_edges[i+1]])
     
     return(regions)
+
+    
 
 
 

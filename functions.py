@@ -10,7 +10,7 @@ from astropy.utils.data import get_pkg_data_filename
 #returns true if the masks partition the sky, false if they don't
 def test_masks(masks):
 	#making an array of the proper length to hold boolean values
-	vals = masks[0]
+	vals = np.copy(masks[0])
 
 	#doing the logical XOR operation across each element of the masks to make sure
 	#that only one of them is true for each index
@@ -130,7 +130,7 @@ def splitting_step1(regions, data_map): #FOR JUNK MAP
         bool_map.append(hp.pixelfunc.mask_bad(temp_map))
         cut_map.append(data_map[bool_map[i] == False])
         size.append(len(cut_map[-1]))
-        print('min:',np.min(cut_map[-1]),'max:',np.max(cut_map[-1]))
+        #print('min:',np.min(cut_map[-1]),'max:',np.max(cut_map[-1]))
     
     if (np.sum(size) != len(data_map)):
         print('Error: a pixel on a boundary was excluded or included in two or more regions, try changing the absolute tolerance')

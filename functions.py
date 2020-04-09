@@ -22,7 +22,7 @@ def test_masks(masks):
 		return(np.all(vals))
 	else:
 		print('ERROR: Masks do not partition the sky')
-
+        
 	return(np.all(vals))
 
 
@@ -55,8 +55,8 @@ def map_and_zero(mask,data_map):
 #takes masks = [[region 1 boolean mask],...,[region n boolean mask]] where n is the number of regions
 #returns a sky map that is all of the regions put togather
 def recombine_maps(maps, masks):
-	if(not test_masks(masks)):
-		return()
+	#if(not test_masks(masks)):
+		#return()
 
 	#making an array of new masks to add together
 	new_maps = np.array([map_and_zero(masks[i], maps[i]) for i in range(len(masks))])
@@ -162,8 +162,8 @@ def bins_to_regions(bin_edges):
     
     #since the regions take the upper edge not 
     #the lower edge, we want to make sure the max point is included in a region
-    bin_edges[0] -= 0.1
-    bin_edges[-1] += 0.1
+    bin_edges[0] -= 1
+    bin_edges[-1] += 1
     for i in range(len(bin_edges)-1):
         regions.append([bin_edges[i],bin_edges[i+1]])
     

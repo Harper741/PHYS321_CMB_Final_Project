@@ -169,6 +169,32 @@ def bins_to_regions(bin_edges):
     
     return(regions)
 
+def recombine_maps_smoothly(maps, masks):
+
+    new_maps = np.array([map_and_zero(masks[i], maps[i]) for i in range(len(masks))])
+
+    smooth_maps = np.array([hp.sphtfunc.smoothing(i, fwhm = (0.5*np.pi)/180) for i in new_maps])
+
+    bool_weights = np.zeros([len(maps[0]),len(maps)])
+
+    for i in range(len(maps[0])):
+        for j in range(len(maps)):
+            if(smooth_maps[j][i] != 0):
+                bool_weights[i][j] = 1
+
+    final_map = np.copy(maps[0])
+    trans_map = np.transpose(smooth_maps)
+
+    for i in range(len(final_map)):
+        num = np.sum(bool_weights[i] * trans_map[i])
+        denom = np.sum(bool_weights[i])
+        final_map[i] = num/denom
+
+    return(final_map)
+
+
+
+
     
 
 

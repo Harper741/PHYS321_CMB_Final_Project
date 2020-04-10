@@ -103,7 +103,7 @@ def compute_weights(freq_temps):
     
     #constructiong the symmetric H matrix
     for i in range(n):
-        for j in range(i,n-i):
+        for j in range(i,n):
             H[i][j] = np.sum(freq_temps[i]*freq_temps[j])
             if(not (i==j)):
                 H[j][i] = H[i][j]

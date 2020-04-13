@@ -192,6 +192,12 @@ def recombine_maps_smoothly(maps, masks):
 
     return(final_map)
 
+#takes in the cross power c and returns the y-axis suitable value to plot
+def yaxis_pow_spec(c, l=1025):
+    y = []
+    for i in range(l):
+        y.append(i*(i+1)*c[i]/(2*np.pi))
+    return y
 
 
 

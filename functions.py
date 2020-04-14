@@ -149,6 +149,7 @@ def splitting_step1(regions, data_map):
     for i in range(len(regions)):
         temp_map = mask_outside_of_interval(regions[i], data_map)
         bool_map.append(hp.pixelfunc.mask_bad(temp_map))
+        #hp.pixelfunc.mask_bad is a function that sets the hp.UNSEEN values to True
         cut_map.append(data_map[bool_map[i] == False])
 
         #so we can chack that the regions are appropriately sized
@@ -204,16 +205,3 @@ def yaxis_pow_spec(c, l=1025):
     for i in range(l):
         y.append(i*(i+1)*c[i]/(2*np.pi))
     return y
-
-
-
-    
-
-
-
-
-
-
-
-
-

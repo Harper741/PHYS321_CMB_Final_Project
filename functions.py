@@ -10,23 +10,18 @@ from astropy.utils.data import get_pkg_data_filename
 #returns true if the masks partition the sky, false if they don't
 def test_masks(masks):
     
-
-    #masks are by True for excluded points, and false for included points, so we need to reverse this
-    #for this test to work
-    negated_masks = []
-    for i in masks:
-        negated_masks.append(np.logical_not(i))
-
-    #making an array of the proper length to hold boolean values
-    vals = np.copy(negated_masks[0])
-
-    #doing the logical XOR operation across each element of the masks so that for each pixel,
-    #if there is not exactly one true element, there will be a false value for that pixel
-    for i in range(len(masks)-1):
-        vals = np.logical_xor(vals, negated_masks[i+1])
-
-    #vals should be an array of all true values if the mask partitions the sky
-    #checking that indeed all elements are true
+    #initializing helper arrays
+    trans_masks = np.transpose(masks)
+    vals = np.copy(masks[0])
+    
+    #checks that there is only one mask in which a pixel is false (i.e. not masked) for each sky pixel
+    for i in range(len(trans_masks)):
+        if(one_false(trans_masks[i])):
+            vals[i] = True
+        else:
+            vals[i] = False
+    
+    #checks if all of the pixels passed the test
     if(np.all(vals)):
         print('The masks partition the sky')
         return(np.all(vals))
@@ -35,6 +30,16 @@ def test_masks(masks):
 
     return(np.all(vals))
 
+#helper function for the mask testing that checks that only one element of an array is true
+def one_false(lis):
+    cnt = 0
+    for i in range(len(lis)):
+        if(not lis[i]):
+            cnt+=1
+    if(cnt == 1):
+        return(True)
+    else:
+        return(False)
 
 #function that combines a map and a mask, and makes healpy ignore the masked values
 #takes a mask, list of boolean values, 1 for each sky pixel, if mask[i]=True, then we set map[i]=hp.UNSEEN

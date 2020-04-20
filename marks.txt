@@ -1,0 +1,51 @@
+Final Project Marks
+----------------------------------------
+----------------------------------------
+Clear description of your problem: 5/5
+Approach to your problem: 10/10
+Technical execution: 25/25
+Documentation and testing: 5/5
+Presentation of results: 5/5
+Interpretation of results: 10/10
+Overall communication: 5/5
+
+SUBTOTAL: 65/65
+
+Creativity + critical thinking bonus: 5/10
+
+TOTAL: 70/65
+
+----------------------------------------
+General comments
+----------------------------------------
+
+This was a very well-executed project! I
+appreciate the care that you took to get
+the details right. The writeup was done
+well and was easy to understand.
+
+Also, nice touch with importing the Tegmark
+et al. junk map technique for defining
+the different regions.
+
+On a quick glance, I actually came to the
+opposite conclusion as you did for RSM vs
+SHMII! If it weren't for the denominators
+in Equation (10), it would actually be the
+same as Equation (4) because of Parseval's
+theorem. (Think of each map as a vector;
+the spherical harmonic transform is a
+unitary transformation, so the sum/integral
+of the dot product of two vectors is the same).
+This means that SHMII is actually the
+same as RSM except it downweights high l
+(because of the 1/(2l + 1) factor). I think
+to really figure out what's going on, we'd
+have to think about the noise and the beams.
+
+It has been truly a pleasure having the
+two of you in both of my classes. Hope you
+have an enjoyable and restful summer!
+
+Best,
+Adrian
